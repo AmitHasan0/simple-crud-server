@@ -11,6 +11,8 @@ app.use(express.json());
 //username: simpleDBUser
 //password: AOO520LE3LDf2TXW
 
+// const uri = "mongodb://localhost:27017";
+
 const uri =
   "mongodb+srv://simpleDBUser:AOO520LE3LDf2TXW@cluster0.cw3ccv0.mongodb.net/?appName=Cluster0";
 
@@ -51,6 +53,24 @@ async function run() {
       console.log("data in the server", req.body);
       const newData = req.body;
       const result = await userCollection.insertOne(newData);
+      res.send(result);
+    });
+
+    //update the data
+    app.put("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const user = req.body;
+      const options = { upsert: true };
+      console.log(user);
+
+      const updateDoc = {
+        $set: {
+          name: user.name,
+          email: user.email,
+        },
+      };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
       res.send(result);
     });
 
